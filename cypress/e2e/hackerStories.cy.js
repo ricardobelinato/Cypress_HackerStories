@@ -67,15 +67,6 @@ describe('Hacker Stories', () => {
 
       it('orders by points', () => {})
     })
-
-    // Hrm, how would I simulate such errors?
-    // Since I still don't know, the tests are being skipped.
-    // TODO: Find a way to test them out.
-    context.skip('Errors', () => {
-      it('shows "Something went wrong ..." in case of a server error', () => {})
-
-      it('shows "Something went wrong ..." in case of a network error', () => {})
-    })
   })
 
   context('Search', () => {

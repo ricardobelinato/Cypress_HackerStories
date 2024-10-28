@@ -1,31 +1,28 @@
 # Testes Automatizados com Cypress - Avançado
 
-👋 Seja bem vindo(a)!
+👋 Bem-vindo(a) ao meu projeto de Testes Automatizados com Cypress!
 
-É muito bom tê-lo(a) aqui. Tenho certeza que você vai adorar este curso. ❤️
+Este repositório documenta minha jornada e avanços no curso avançado de Cypress da [**Escola Talking About Testing**](https://udemy.com/user/walmyr). Aqui, compartilho meus aprendizados, práticas e os resultados dos testes automatizados que desenvolvi.
 
-## O que você vai aprender
+## Sobre o Projeto
 
-Durante o curso avançado de Cypress, você vai aprender:
+Este projeto é uma aplicação prática dos conhecimentos adquiridos no curso de Cypress Avançado, onde estou focado em melhorar habilidades de automação de testes e refinar o controle sobre as interações e validações.
 
-- Como criar testes 100% _flakiness-free_
-- Como interagir com a aplicação o mais próximo de como um usuário real faria
-  - Como esperar por um elemento estar visível antes de interagir com ele
-  - Como simular o uso do teclado em vez de clique em botão em funcionalidades de busca
-  - Como esperar por requisições HTTP antes de seguir em frente com os testes
-- Como organizar diferentes testes em seus específicos contextos
-- Como ler o `localStorage` do navegador
-- Como tornar seletores de elementos mais específicos
-- Como simplificar comandos repetitivos
-- Como interceptar e mockar uma API externa para testar o frontend independente do backend
-- Como simular erros no servidor e na rede
-- Como simular lentidão na chamada à uma API
-- Como modificar o relatório de testes padrão para um que combine com o seu estilo 😉
+## Aprendizados e Conquistas
 
-## Vamos começar?
+Durante essa trajetória, aprendi a desenvolver testes avançados que cobrem uma variedade de cenários reais e desafiadores, incluindo:
 
-Vá para a seção de [pré-requisitos](./lessons/0.md).
-
-___
-
-Um curso da [**Escola Talking About Testing**](https://udemy.com/user/walmyr).
+- Criação de testes 100% flakiness-free, proporcionando estabilidade nas execuções.
+- Interação com a aplicação de maneira mais próxima ao comportamento de um usuário real:
+  - Espera por elementos visíveis antes de interagir com eles.
+  - Simulação de interações mais naturais, como o uso do teclado em funcionalidades de busca.
+  - Controle das requisições HTTP para garantir um fluxo consistente nos testes.
+- Organização dos testes em contextos específicos para facilitar a leitura e manutenção.
+- Manipulação do localStorage para manter estado entre testes.
+- Otimização dos seletores de elementos para torná-los mais específicos e confiáveis.
+- Simplificação de comandos repetitivos com comandos personalizados.
+- Interceptação e mock de APIs externas, permitindo a independência do backend.
+- Simulação de condições adversas:
+  - Testes de erro do servidor e da rede.
+  - Simulação de lentidão nas chamadas de API.
+- Personalização do relatório de testes para um visual mais amigável e ajustado às minhas preferências.
