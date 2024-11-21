@@ -2,7 +2,7 @@ describe('Hacker Stories', () => {
   const initialTerm = 'React'
   const newTerm = 'Cypress'
 
-  context.skip('Hitting the real API', () => {
+  context('Hitting the real API', () => {
     beforeEach(() => {
       cy.intercept({
         method: 'GET',
@@ -36,30 +36,36 @@ describe('Hacker Stories', () => {
         }
       }).as('getMoreStories');
 
-      cy.get('.item').should('be.visible').and('have.length', 20);
+      cy.get('.item').should('have.length', 20);
 
       cy.contains('More').should('be.visible').click();
       cy.wait('@getMoreStories');
 
-      cy.get('.item').should('be.visible').and('have.length', 40);
-    })
+      cy.get('.item').should('have.length', 40);
+    });
 
     it('searches via the last searched term', () => {
       cy.get('#search').should('be.visible').clear().type(`${newTerm}{enter}`);
 
       cy.wait('@getNewTermStories');
 
+      cy.getLocalStorage('search')
+        .should('be.equal', newTerm);
+
       cy.get(`button:contains(${initialTerm})`).should('be.visible').click();
 
       cy.wait('@getStories');
 
-      cy.get('.item').should('be.visible').and('have.length', 20);
+      cy.getLocalStorage('search')
+        .should('be.equal', initialTerm);
+
+      cy.get('.item').should('have.length', 20);
       cy.get('.item').first().should('be.visible').and('contain', initialTerm);
       cy.get(`button:contains(${newTerm})`).should('be.visible');
     })
   });
 
-  context('Mocking the API', () => {
+  context.skip('Mocking the API', () => {
     beforeEach(() => {
       cy.intercept(
         'GET',
@@ -101,7 +107,7 @@ describe('Hacker Stories', () => {
 
       it('shows one less story after dimissing the first one', () => {
         cy.get('.button-small').first().should('be.visible').click();
-        cy.get('.item').should('be.visible').and('have.length', 1);
+        cy.get('.item').should('have.length', 1);
       });
 
       context('Order by', () => {
@@ -119,7 +125,7 @@ describe('Hacker Stories', () => {
           cy.get(`.item a:contains(${stories.hits[1].title})`)
             .should('be.visible').and('have.attr', 'href', stories.hits[1].url);
         });
-          
+
         it('orders by author', () => {
           cy.get('.list-header-button:contains(Author)').as('authorHeader').should('be.visible').click();
           cy.get('.item').first().should('be.visible').and('contain', stories.hits[0].author);
@@ -131,7 +137,7 @@ describe('Hacker Stories', () => {
         it('orders by comments', () => {
           cy.get('.list-header-button:contains(Comments)').as('commentsHeader').should('be.visible').click();
           cy.get('.item').first().should('be.visible').and('contain', stories.hits[1].num_comments);
-          
+
           cy.get('@commentsHeader').should('be.visible').click();
           cy.get('.item').first().should('be.visible').and('contain', stories.hits[0].num_comments);
         });
@@ -178,7 +184,10 @@ describe('Hacker Stories', () => {
 
         cy.wait('@getStories');
 
-        cy.get('.item').should('be.visible').and('have.length', 2);
+        cy.getLocalStorage('search')
+        .should('be.equal', newTerm);
+
+        cy.get('.item').should('have.length', 2);
         cy.get(`button:contains(${initialTerm})`)
           .should('be.visible');
       });
@@ -189,7 +198,10 @@ describe('Hacker Stories', () => {
 
         cy.wait('@getStories');
 
-        cy.get('.item').should('be.visible').and('have.length', 2);
+        cy.getLocalStorage('search')
+          .should('be.equal', newTerm);
+
+        cy.get('.item').should('have.length', 2);
         cy.get(`button:contains(${initialTerm})`)
           .should('be.visible');
       });
@@ -205,45 +217,68 @@ describe('Hacker Stories', () => {
           ).as('getRandomStories');
 
           Cypress._.times(6, () => {
+            const randomWord = faker.random.word()
+
             cy.get('#search')
               .should('be.visible')
               .clear()
-              .type(`${faker.random.word()}{enter}`);
+              .type(`${randomWord}{enter}`);
             cy.wait('@getRandomStories');
+            cy.getLocalStorage('search')
+              .should('be.equal', randomWord)
           })
 
-          cy.get('.last-searches button')
-            .should('be.visible').and('have.length', 5);
+          cy.get('.last-searches').within(() => {
+            cy.get('button').should('have.length', 5);
+          });
+
         })
       })
     })
   });
-  
+
   context.skip('Errors, simulating server and network failures', () => {
     it('shows "Something went wrong ..." in case of a server error', () => {
-        cy.intercept(
-            'GET',
-            '**/search**',
-            { statusCode: 500 }
-        ).as('getServerFailure');
+      cy.intercept(
+        'GET',
+        '**/search**',
+        { statusCode: 500 }
+      ).as('getServerFailure');
 
-        cy.visit('/');
-        cy.wait('@getServerFailure');
+      cy.visit('/');
+      cy.wait('@getServerFailure');
 
-        cy.get('p:contains(Something went wrong ...)').should('be.visible');
+      cy.get('p:contains(Something went wrong ...)').should('be.visible');
     });
 
     it('shows "Something went wrong ..." in case of a network error', () => {
-        cy.intercept(
-            'GET',
-            '**/search**',
-            { forceNetworkError: true }
-        ).as('getNetworkFailure');
+      cy.intercept(
+        'GET',
+        '**/search**',
+        { forceNetworkError: true }
+      ).as('getNetworkFailure');
 
-        cy.visit('/');
-        cy.wait('@getNetworkFailure');
+      cy.visit('/');
+      cy.wait('@getNetworkFailure');
 
-        cy.get('p:contains(Something went wrong ...)').should('be.visible');
+      cy.get('p:contains(Something went wrong ...)').should('be.visible');
     })
   });
 })
+
+it('shows a "Loading ..." state before showing the results', () => {
+  cy.intercept(
+    'GET',
+    '**/search**',
+    { delay: 1000,
+      fixture: 'stories'
+    }
+  ).as('getDelayedStories');
+
+  cy.visit('/');
+
+  cy.assertLoadingIsShownAndHidden();
+  cy.wait('@getDelayedStories');
+
+  cy.get('.item').should('have.length', 2);
+});
